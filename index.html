@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>For Dodoo 💐</title>
+
+<style>
+body {
+  text-align: center;
+  font-family: Arial;
+  background: pink;
+}
+
+/* Maze */
+#maze {
+  display: grid;
+  grid-template-columns: repeat(5, 60px);
+  gap: 5px;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.cell {
+  width: 60px;
+  height: 60px;
+  background: white;
+  border: 2px solid gray;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+}
+
+.wall {
+  background: black;
+}
+
+/* Message */
+#msg {
+  margin-top: 20px;
+  font-size: 18px;
+  color: red;
+}
+
+/* Remote */
+#controls {
+  margin-top: 20px;
+}
+
+#controls button {
+  font-size: 20px;
+  padding: 10px 15px;
+  margin: 5px;
+  border-radius: 10px;
+  border: none;
+  background: white;
+  cursor: pointer;
+}
+
+#controls button:hover {
+  background: lightpink;
+}
+
+/* Final screen */
+#final {
+  display: none;
+  margin-top: 30px;
+  font-size: 22px;
+}
+
+/* Confetti */
+.confetti {
+  position: fixed;
+  width: 10px;
+  height: 10px;
+  background: red;
+  top: -10px;
+  animation: fall 3s linear infinite;
+}
+
+@keyframes fall {
+  to {
+    transform: translateY(100vh) rotate(360deg);
+  }
+}
+</style>
+
+</head>
+<body>
+
+<h1>🚴‍♂️ Deliver flowers to Dodoo 💐</h1>
+
+<div id="maze"></div>
+<div id="msg"></div>
+
+<!-- Remote -->
+<div id="controls">
+  <button onclick="move('up')">⬆️</button><br>
+  <button onclick="move('left')">⬅️</button>
+  <button onclick="move('down')">⬇️</button>
+  <button onclick="move('right')">➡️</button>
+</div>
+
+<!-- Final -->
+<div id="final">
+  💐 HAPPY BIRTHDAY DODOO 💐 <br><br>
+
+  Anyway…<br><br>
+  just stay like this — a little dramatic, a little cute,<br>
+  and very you.<br><br>
+
+  That works perfectly 😌<br><br>
+
+  <img src="https://media.giphy.com/media/MDJ9IbxxvDUQM/giphy.gif" width="200">
+</div>
+
+<script>
+const maze = [
+ [0,0,1,0,0],
+ [1,0,1,0,1],
+ [0,0,0,0,1],
+ [0,1,1,0,0],
+ [0,0,0,1,0]
+];
+
+let x = 0, y = 0;
+
+const messages = {
+ "0,1": "Way to that cute girl 💕",
+ "2,2": "Her voice is cute 🎶",
+ "3,3": "Way to the diva 👑",
+ "4,2": "But she's a shootyyy too 😚"
+};
+
+const mazeDiv = document.getElementById("maze");
+const msgDiv = document.getElementById("msg");
+
+function draw() {
+ mazeDiv.innerHTML = "";
+ for(let i=0;i<5;i++){
+  for(let j=0;j<5;j++){
+   let d = document.createElement("div");
+   d.className = "cell";
+
+   if(maze[i][j]==1) d.classList.add("wall");
+
+   if(i==y && j==x) d.innerHTML="🚴‍♂️";
+   if(i==4 && j==4) d.innerHTML="💐";
+
+   mazeDiv.appendChild(d);
+  }
+ }
+}
+
+/* Movement function (used by both keyboard + buttons) */
+function move(dir){
+ let nx=x, ny=y;
+
+ if(dir=="up") ny--;
+ if(dir=="down") ny++;
+ if(dir=="left") nx--;
+ if(dir=="right") nx++;
+
+ if(nx>=0 && ny>=0 && nx<5 && ny<5 && maze[ny][nx]==0){
+  x=nx; y=ny;
+
+  let key = y + "," + x;
+  if(messages[key]){
+    msgDiv.innerText = messages[key];
+  }
+
+  if(x==4 && y==4){
+    endGame();
+  }
+
+  draw();
+ }
+}
+
+/* Keyboard support */
+document.addEventListener("keydown", e=>{
+ if(e.key=="ArrowUp") move("up");
+ if(e.key=="ArrowDown") move("down");
+ if(e.key=="ArrowLeft") move("left");
+ if(e.key=="ArrowRight") move("right");
+});
+
+/* End animation */
+function endGame(){
+ document.getElementById("final").style.display="block";
+ mazeDiv.style.display="none";
+ msgDiv.style.display="none";
+ document.getElementById("controls").style.display="none";
+
+ startConfetti();
+}
+
+/* Confetti */
+function startConfetti(){
+ for(let i=0;i<50;i++){
+   let c = document.createElement("div");
+   c.className = "confetti";
+   c.style.left = Math.random()*100 + "vw";
+   c.style.background = ["red","yellow","blue","green","pink"][Math.floor(Math.random()*5)];
+   c.style.animationDuration = (2 + Math.random()*3) + "s";
+   document.body.appendChild(c);
+ }
+}
+
+draw();
+</script>
+
+</body>
+</html>
